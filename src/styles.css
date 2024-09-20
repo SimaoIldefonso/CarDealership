@@ -1,0 +1,35 @@
+body {
+    background-color: #f8f9fa; /* Cor de fundo leve */
+  }
+  
+  h1, h2 {
+    color: #343a40; /* Títulos em cinza escuro */
+  }
+  
+  .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .nav-link {
+    font-size: 1.1rem;
+  }
+  
+  .container {
+    margin-top: 2rem;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+  
