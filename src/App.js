@@ -1,10 +1,11 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './components/Home';
 import CarsList from './components/CarsList';
 import About from './components/About';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Footer from './components/Footer';
+import CarDetails from './components/CarDetails';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cars" element={<CarsList />} />
+          <Route path="/car/:id" element={<CarDetails />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </div>
