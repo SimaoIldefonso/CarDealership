@@ -1,0 +1,133 @@
+/* CarDetails.css */
+.car-details-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #007bff;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    color: #0056b3;
+  }
+  
+  .car-details-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .car-image-container {
+    position: relative;
+    width: 700px; /* Aumentar a largura */
+    height: 400px; /* Aumentar a altura */
+    margin-bottom: 20px;
+  }
+  
+  .car-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .image-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 50%;
+  }
+  
+  .image-nav.left {
+    left: 10px;
+  }
+  
+  .image-nav.right {
+    right: 10px;
+  }
+  
+  .image-nav:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .thumbnails {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .thumbnail {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    margin: 0 5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+  }
+  
+  .thumbnail.active {
+    border-color: #007bff;
+  }
+  
+  .car-info {
+    text-align: left;
+    font-size: 18px;
+  }
+  
+  .car-info-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+  }
+  
+  .car-info-icon {
+    margin-right: 10px;
+  }
+  
+  .seller-info {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .seller-logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+  }
+  
+  .contact-seller {
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .contact-seller:hover {
+    background-color: #0056b3;
+  }
+  
