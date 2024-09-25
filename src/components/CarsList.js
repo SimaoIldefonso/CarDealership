@@ -13,6 +13,8 @@ const CarsList = () => {
     yearMax: '',
     mileageMin: '',
     mileageMax: '',
+    CvMax: '',
+    CvMin: '',
     fuel: '',
     color: ''
   });
@@ -59,6 +61,9 @@ const CarsList = () => {
       const meetsMileage =
         (!filters.mileageMin || car.mileage >= filters.mileageMin) &&
         (!filters.mileageMax || car.mileage <= filters.mileageMax);
+      const meetsCv =
+        (!filters.CvMax || car.Cv <= filters.CvMax) &&
+        (!filters.CvMin || car.Cv >= filters.CvMin);
       const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
       const meetsColor = !filters.color || car.color === filters.color;
 
@@ -157,6 +162,28 @@ const CarsList = () => {
             onChange={handleFilterChange}
           />
         </div>
+{/*
+        <div className="filter-group">
+          <label htmlFor="CvMin">Cv Min</label>
+          <input
+            type="number"
+            id="CvMin"
+            name="CvMin"
+            value={filters.CvMin}
+            onChange={handleFilterChange}
+          />
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="CvMax">Cv Max</label>
+          <input
+            type="number"
+            id="CvMax"
+            name="CvMax"
+            value={filters.CvMax}
+            onChange={handleFilterChange}
+          />
+        </div> */ }
 
         <div className="filter-group">
           <label htmlFor="fuel">Fuel</label>
