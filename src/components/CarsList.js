@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/CarsList.css';
 import { useNavigate } from 'react-router-dom';
+import Slider from 'rc-slider'; // Instale a biblioteca: npm install rc-slider
+import 'rc-slider/assets/index.css';
 
 const CarsList = () => {
   const [cars, setCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [fuels, setFuels] = useState([]);
+  const [priceRange, setPriceRange] = useState([500, 1000000]); // Valor inicial para o slider de preço
   const [filters, setFilters] = useState({
     brand: '',
     priceMin: '',
@@ -13,8 +18,6 @@ const CarsList = () => {
     yearMax: '',
     mileageMin: '',
     mileageMax: '',
-    CvMax: '',
-    CvMin: '',
     fuel: '',
     color: ''
   });
@@ -22,24 +25,26 @@ const CarsList = () => {
 
   useEffect(() => {
     fetch('http://localhost:3001/api/cars', {
-      method: 'GET',
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
+      method: 'GET'
     })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Erro ao buscar carros');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      setCars(data);
-      setFilteredCars(data);
-    })
-    .catch((error) => {
-      console.error('Erro ao buscar carros:', error);
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Erro ao buscar carros');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCars(data);
+        setFilteredCars(data);
+
+        const uniqueColors = [...new Set(data.map((car) => car.color))];
+        const uniqueFuels = [...new Set(data.map((car) => car.fuel))];
+        setColors(uniqueColors);
+        setFuels(uniqueFuels);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar carros:', error);
+      });
   }, []);
 
   // Função para atualizar os filtros conforme as mudanças nos inputs
@@ -54,16 +59,13 @@ const CarsList = () => {
       const meetsPrice =
         (!filters.priceMin || car.price >= filters.priceMin) &&
         (!filters.priceMax || car.price <= filters.priceMax);
-      const meetsBrand = !filters.brand || car.brand.includes(filters.brand);
+      const meetsBrand = !filters.brand || car.brand.toLowerCase().includes(filters.brand.toLowerCase());
       const meetsYear =
         (!filters.yearMin || car.year >= filters.yearMin) &&
         (!filters.yearMax || car.year <= filters.yearMax);
       const meetsMileage =
         (!filters.mileageMin || car.mileage >= filters.mileageMin) &&
         (!filters.mileageMax || car.mileage <= filters.mileageMax);
-      const meetsCv =
-        (!filters.CvMax || car.Cv <= filters.CvMax) &&
-        (!filters.CvMin || car.Cv >= filters.CvMin);
       const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
       const meetsColor = !filters.color || car.color === filters.color;
 
@@ -79,7 +81,12 @@ const CarsList = () => {
     setFilteredCars(filtered);
   };
 
-  // Renderiza os filtros na barra lateral e os resultados dos carros
+  // Função para atualizar o slider de preço
+  const handlePriceSliderChange = (value) => {
+    setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
+    setPriceRange(value);
+  };
+
   return (
     <div className="cars-list-container">
       <div className="filters-sidebar">
@@ -98,115 +105,62 @@ const CarsList = () => {
         </div>
 
         <div className="filter-group">
-          <label htmlFor="priceMin">Price Min (€)</label>
-          <input
-            type="number"
-            id="priceMin"
-            name="priceMin"
-            value={filters.priceMin}
-            onChange={handleFilterChange}
+          <label htmlFor="price">Price Range (€)</label>
+          <Slider
+            range
+            min={500}
+            max={1000000}
+            value={priceRange}
+            onChange={handlePriceSliderChange}
+            trackStyle={{ backgroundColor: '#27485f', height: 5 }}
+            handleStyle={{
+              borderColor: '#27485f',
+              height: 18,
+              width: 18,
+              marginLeft: -9,
+              marginTop: -7,
+              backgroundColor: '#fff'
+            }}
+            railStyle={{ backgroundColor: '#ccc', height: 5 }}
           />
+          <div className="price-labels">
+            <span>{priceRange[0]} €</span>
+            <span>{priceRange[1]} €</span>
+          </div>
         </div>
-
-        <div className="filter-group">
-          <label htmlFor="priceMax">Price Max (€)</label>
-          <input
-            type="number"
-            id="priceMax"
-            name="priceMax"
-            value={filters.priceMax}
-            onChange={handleFilterChange}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="yearMin">Year Min</label>
-          <input
-            type="number"
-            id="yearMin"
-            name="yearMin"
-            value={filters.yearMin}
-            onChange={handleFilterChange}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="yearMax">Year Max</label>
-          <input
-            type="number"
-            id="yearMax"
-            name="yearMax"
-            value={filters.yearMax}
-            onChange={handleFilterChange}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="mileageMin">Mileage Min (km)</label>
-          <input
-            type="number"
-            id="mileageMin"
-            name="mileageMin"
-            value={filters.mileageMin}
-            onChange={handleFilterChange}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="mileageMax">Mileage Max (km)</label>
-          <input
-            type="number"
-            id="mileageMax"
-            name="mileageMax"
-            value={filters.mileageMax}
-            onChange={handleFilterChange}
-          />
-        </div>
-{/*
-        <div className="filter-group">
-          <label htmlFor="CvMin">Cv Min</label>
-          <input
-            type="number"
-            id="CvMin"
-            name="CvMin"
-            value={filters.CvMin}
-            onChange={handleFilterChange}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="CvMax">Cv Max</label>
-          <input
-            type="number"
-            id="CvMax"
-            name="CvMax"
-            value={filters.CvMax}
-            onChange={handleFilterChange}
-          />
-        </div> */ }
 
         <div className="filter-group">
           <label htmlFor="fuel">Fuel</label>
-          <input
-            type="text"
+          <select
             id="fuel"
             name="fuel"
             value={filters.fuel}
             onChange={handleFilterChange}
-            placeholder="e.g., Diesel"
-          />
+          >
+            <option value="">All Fuels</option>
+            {fuels.map((fuel, index) => (
+              <option key={index} value={fuel}>
+                {fuel}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="filter-group">
           <label htmlFor="color">Color</label>
-          <input
-            type="text"
+          <select
             id="color"
             name="color"
             value={filters.color}
             onChange={handleFilterChange}
-            placeholder="e.g., Black"
-          />
+          >
+            <option value="">All Colors</option>
+            {colors.map((color, index) => (
+              <option key={index} value={color}>
+                {color}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button className="apply-filters-button" onClick={applyFilters}>

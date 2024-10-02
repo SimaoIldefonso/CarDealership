@@ -1,0 +1,48 @@
+.home-container {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+}
+
+h2 {
+  font-size: 2.5rem;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 40px;
+}
+
+.carousel-item {
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.carousel-item:hover {
+  transform: scale(1.05);
+}
+
+.car-image {
+  background-color: #ccc; /* Adiciona uma cor de fundo temporária */
+  height: 500px;
+}
+
+
+.carousel-caption h5 {
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.carousel-caption p {
+  font-size: 1.2rem;
+  color: #d1d1d1;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+}

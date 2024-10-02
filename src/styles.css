@@ -1,13 +1,14 @@
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; 
   margin: 0;
-  background-color: #f8f9fa; /* Cor de fundo leve */
+  background-color: #f8f9fa;
 }
 
 main {
   flex: 1;
+  padding-bottom: 2rem; 
 }
 
 h1, h2 {
@@ -37,4 +38,5 @@ footer {
   text-align: center;
   padding: 1rem 0;
   width: 100%;
+  margin-top: auto; 
 }

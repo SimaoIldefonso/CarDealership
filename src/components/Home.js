@@ -1,35 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Home.css';
 
 const Home = () => {
+  const [cars, setCars] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/cars')
+      .then(response => setCars(response.data))
+      .catch(error => console.error('Error fetching cars:', error));
+  }, []);
+
+  const handleCarClick = (carId) => {
+    navigate(`/car/${carId}`);
+  };
+
   return (
-    <div>
+    <div className="home-container">
       <h2>Welcome to Our Car Dealership</h2>
       <p>Find your dream car with us!</p>
 
       <div id="carCarousel" className="carousel slide" data-bs-ride="carousel">
         <div className="carousel-inner">
-          <div className="carousel-item active">
-            <img src="https://via.placeholder.com/800x300" className="d-block w-100" alt="Car 1" />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Audi RS6 Avant</h5>
-              <p>Luxury and performance in one package.</p>
+          {cars.map((car, index) => (
+            <div 
+              key={car._id} 
+              className={`carousel-item ${index === 0 ? 'active' : ''}`} 
+              onClick={() => handleCarClick(car._id)}
+            >
+              <img src={car.images[0]} className="d-block w-100 car-image" alt={car.name} />
+              <div className="carousel-caption d-none d-md-block">
+                <h5>{car.name}</h5>
+                <p>{car.description}</p>
+              </div>
             </div>
-          </div>
-          <div className="carousel-item">
-            <img src="https://via.placeholder.com/800x300" className="d-block w-100" alt="Car 2" />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Ford Mustang 2021</h5>
-              <p>The muscle car you always wanted.</p>
-            </div>
-          </div>
-          <div className="carousel-item">
-            <img src="https://via.placeholder.com/800x300" className="d-block w-100" alt="Car 3" />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Chevrolet Camaro</h5>
-              <p>Style and speed for the car enthusiast.</p>
-            </div>
-          </div>
+          ))}
         </div>
         <button className="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
           <span className="carousel-control-prev-icon" aria-hidden="true"></span>
