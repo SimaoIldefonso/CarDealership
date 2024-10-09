@@ -9,7 +9,7 @@ const CarsList = () => {
   const [filteredCars, setFilteredCars] = useState([]);
   const [colors, setColors] = useState([]);
   const [fuels, setFuels] = useState([]);
-  const [priceRange, setPriceRange] = useState([500, 1000000]); // Valor inicial para o slider de preço
+  const [priceRange, setPriceRange] = useState([50000, 800000]); // Valor inicial para o slider de preço
   const [filters, setFilters] = useState({
     brand: '',
     priceMin: '',
@@ -108,8 +108,8 @@ const CarsList = () => {
           <label htmlFor="price">Price Range (€)</label>
           <Slider
             range
-            min={500}
-            max={1000000}
+            min={50000}
+            max={800000}
             value={priceRange}
             onChange={handlePriceSliderChange}
             trackStyle={{ backgroundColor: '#27485f', height: 5 }}
