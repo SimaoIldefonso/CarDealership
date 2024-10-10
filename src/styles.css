@@ -1,42 +1,108 @@
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; 
+  min-height: 100vh;
   margin: 0;
   background-color: #f8f9fa;
 }
 
 main {
   flex: 1;
-  padding-bottom: 2rem; 
+  padding-bottom: 2rem;
 }
 
-h1, h2 {
-  color: #343a40; /* Títulos em cinza escuro */
-}
-
+/* Navbar */
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
+  color: #fff;
 }
 
 .nav-link {
   font-size: 1.1rem;
+  color: #ccc;
 }
 
+.nav-link:hover {
+  color: #fff;
+}
+
+/* Container principal */
 .container {
   margin-top: 2rem;
 }
 
-.card {
-  margin-bottom: 20px;
+h1, h2 {
+  color: #343a40;
+  margin-bottom: 1.5rem;
 }
 
+/* Estilos do Carrossel */
+.carousel-item {
+  cursor: pointer;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.carousel-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.car-image {
+  height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: opacity 0.5s ease;
+}
+
+.carousel-caption h5 {
+  font-size: 1.8rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.carousel-caption p {
+  font-size: 1.2rem;
+  color: #d1d1d1;
+}
+
+/* Footer estilizado */
 footer {
   background-color: #343a40;
   color: white;
   text-align: center;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   width: 100%;
-  margin-top: auto; 
+  margin-top: auto;
+}
+
+footer a {
+  color: #d1d1d1;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+
+  .carousel-caption h5 {
+    font-size: 1.4rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1rem;
+  }
+
+  .car-image {
+    height: 300px;
+  }
 }
