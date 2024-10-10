@@ -90,7 +90,7 @@ const CarDetails = () => {
         </div>
 
         <div className="seller-info">
-          <button className="contact-seller">Contactar vendedor</button>
+          <button className="contact-seller">Contact Seller</button>
         </div>
       </div>
     </div>

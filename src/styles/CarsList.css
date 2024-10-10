@@ -89,6 +89,15 @@
   margin-bottom: 10px;
 }
 
+.horsepower-range {
+  display: flex;
+  gap: 10px;
+}
+
+.horsepower-range input {
+  width: 48%; /* Ambos os inputs ocupam 48% da largura para ficar lado a lado */
+}
+
 footer {
   background-color: #343a40;
   color: white;

@@ -8,8 +8,9 @@ const CarsList = () => {
   const [cars, setCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
   const [colors, setColors] = useState([]);
-  const [fuels, setFuels] = useState([]);
-  const [priceRange, setPriceRange] = useState([50000, 800000]); // Valor inicial para o slider de preço
+  const [fuels, setFuels] = useState([]);/*
+  const [horsepowerRange, setHorsepowerRange] = useState([100, 1000]);*/
+  const [priceRange, setPriceRange] = useState([50000, 800000]);
   const [filters, setFilters] = useState({
     brand: '',
     priceMin: '',
@@ -18,7 +19,9 @@ const CarsList = () => {
     yearMax: '',
     mileageMin: '',
     mileageMax: '',
-    fuel: '',
+    fuel: '',/*
+    horsepowerMin: '',
+    horsepowerMax: '', */
     color: ''
   });
   const navigate = useNavigate();
@@ -57,25 +60,30 @@ const CarsList = () => {
   const applyFilters = () => {
     let filtered = cars.filter((car) => {
       const meetsPrice =
-        (!filters.priceMin || car.price >= filters.priceMin) &&
-        (!filters.priceMax || car.price <= filters.priceMax);
+        (!filters.priceMin || car.price >= Number(filters.priceMin)) &&
+        (!filters.priceMax || car.price <= Number(filters.priceMax));
       const meetsBrand = !filters.brand || car.brand.toLowerCase().includes(filters.brand.toLowerCase());
       const meetsYear =
-        (!filters.yearMin || car.year >= filters.yearMin) &&
-        (!filters.yearMax || car.year <= filters.yearMax);
+        (!filters.yearMin || car.year >= Number(filters.yearMin)) &&
+        (!filters.yearMax || car.year <= Number(filters.yearMax));
       const meetsMileage =
-        (!filters.mileageMin || car.mileage >= filters.mileageMin) &&
-        (!filters.mileageMax || car.mileage <= filters.mileageMax);
+        (!filters.mileageMin || car.mileage >= Number(filters.mileageMin)) &&
+        (!filters.mileageMax || car.mileage <= Number(filters.mileageMax));
       const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
       const meetsColor = !filters.color || car.color === filters.color;
-
+      /*
+      const meetsHorsepower =
+        (!filters.horsepowerMin || car.horsepower >= Number(filters.horsepowerMin)) &&
+        (!filters.horsepowerMax || car.horsepower <= Number(filters.horsepowerMax));
+  */
       return (
         meetsPrice &&
         meetsBrand &&
         meetsYear &&
         meetsMileage &&
         meetsFuel &&
-        meetsColor
+        meetsColor/* &&
+        meetsHorsepower*/
       );
     });
     setFilteredCars(filtered);
@@ -85,7 +93,11 @@ const CarsList = () => {
   const handlePriceSliderChange = (value) => {
     setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
     setPriceRange(value);
-  };
+  };/*
+  const handleHorsepowerSliderChange = (value) => {
+    setFilters({ ...filters, horsepowerMin: value[0], horsepowerMax: value[1] });
+    setHorsepowerRange(value);
+  }*/
 
   return (
     <div className="cars-list-container">
@@ -110,6 +122,7 @@ const CarsList = () => {
             range
             min={50000}
             max={800000}
+            step={1000}
             value={priceRange}
             onChange={handlePriceSliderChange}
             trackStyle={{ backgroundColor: '#27485f', height: 5 }}
@@ -128,6 +141,28 @@ const CarsList = () => {
             <span>{priceRange[1]} €</span>
           </div>
         </div>
+{/*
+        <div className="filter-group">
+          <label htmlFor="horsepower">Horsepower (CV)</label>
+          <Slider
+            range
+            min={100}
+            max={1000}
+            step={10}
+            value={horsepowerRange}
+            onChange={handleHorsepowerSliderChange}
+            trackStyle={{ backgroundColor: '#27485f', height: 5 }}
+            handleStyle={{
+              borderColor: '#27485f',
+              height: 18,
+              width: 18,
+              marginLeft: -9,
+              marginTop: -7,
+              backgroundColor: '#fff'
+            }}
+            railStyle={{ backgroundColor: '#ccc', height: 5 }}
+          />
+        </div> */}
 
         <div className="filter-group">
           <label htmlFor="fuel">Fuel</label>
