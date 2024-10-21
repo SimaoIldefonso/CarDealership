@@ -1,19 +1,27 @@
 .home-container {
   text-align: center;
-  padding: 40px 20px;
-  background-color: #f8f9fa;
+  padding: 50px 20px;
+  background: linear-gradient(to right, #ece9e6, #ffffff);
 }
 
-h2 {
+.home-container h2 {
   font-size: 2.5rem;
-  color: #343a40;
-  margin-bottom: 10px;
+  color: #003c7d;
+  margin-bottom: 20px;
+  animation: fadeInDown 1s;
 }
 
-p {
+.home-container p {
   font-size: 1.2rem;
-  color: #6c757d;
+  color: #555;
   margin-bottom: 40px;
+  animation: fadeInUp 1s;
+}
+
+.carousel-inner {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-item {
@@ -25,24 +33,37 @@ p {
   transform: scale(1.05);
 }
 
-.car-image {
-  background-color: #ccc; /* Adiciona uma cor de fundo temporária */
-  height: 500px;
-}
-
-
 .carousel-caption h5 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  font-weight: bold;
   color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .carousel-caption p {
-  font-size: 1.2rem;
-  color: #d1d1d1;
+  font-size: 1rem;
+  color: #ddd;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

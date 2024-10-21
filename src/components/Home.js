@@ -10,7 +10,7 @@ const Home = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3001/api/cars')
-      .then(response => setCars(response.data))
+      .then(response => setCars(response.data.slice(0, 3))) // Pegar os 3 primeiros carros
       .catch(error => console.error('Error fetching cars:', error));
   }, []);
 

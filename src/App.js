@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './components/Home';
 import CarsList from './components/CarsList';
 import About from './components/About';
 import Footer from './components/Footer';
 import CarDetails from './components/CarDetails';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 function App() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <Router>
       <div className="d-flex flex-column min-vh-100">
@@ -29,6 +36,13 @@ function App() {
                   <Link className="nav-link" to="/about">About Us</Link>
                 </li>
               </ul>
+              <ul className="navbar-nav ms-auto">
+                <li className="nav-item">
+                  <button className="btn btn-link nav-link" onClick={handleShow}>
+                    <i className="fas fa-user"></i> User
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </nav>
@@ -48,6 +62,31 @@ function App() {
           company="Car Dealership"
           year={new Date().getFullYear()}
         />
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Login / Sign Up</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control type="email" placeholder="Enter email" />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control type="password" placeholder="Password" />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Login
+              </Button>
+              <Button variant="secondary" className="ms-2" onClick={handleClose}>
+                Sign Up
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
       </div>
     </Router>
   );

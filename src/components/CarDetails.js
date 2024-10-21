@@ -1,4 +1,3 @@
-// CarDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaChevronLeft, FaTachometerAlt, FaGasPump, FaCogs, FaBolt } from 'react-icons/fa';
@@ -73,19 +72,19 @@ const CarDetails = () => {
         <div className="car-info">
           <div className="car-info-item">
             <FaTachometerAlt className="car-info-icon" />
-            <p><strong>Quilómetros:</strong> {car.mileage} km</p>
+            <p><strong>Mileage:</strong> {car.mileage} km</p>
           </div>
           <div className="car-info-item">
             <FaGasPump className="car-info-icon" />
-            <p><strong>Combustível:</strong> {car.fuel}</p>
+            <p><strong>Fuel:</strong> {car.fuel}</p>
           </div>
           <div className="car-info-item">
             <FaCogs className="car-info-icon" />
-            <p><strong>Tipo de Caixa:</strong> {car.gearbox}</p>
+            <p><strong>Gearbox:</strong> {car.gearbox}</p>
           </div>
           <div className="car-info-item">
             <FaBolt className="car-info-icon" />
-            <p><strong>Potência:</strong> {car.power} cv</p>
+            <p><strong>Power:</strong> {car.power} hp</p>
           </div>
         </div>
 
