@@ -53,6 +53,21 @@
   background-color: #003064;
 }
 
+.reset-filters-button {
+  background-color: white;
+  color: #003c7d;
+  padding: 10px 15px;
+  border: 1px solid #003c7d;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.reset-filters-button:hover {
+  background-color: #f0f0f0;
+}
+
 .cars-list {
   flex-grow: 1;
 }

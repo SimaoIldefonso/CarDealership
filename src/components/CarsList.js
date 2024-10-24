@@ -1,38 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/CarsList.css';
+import React, { useContext, useEffect, useState } from 'react';
+import { FiltersContext } from '../components/Filters';
 import { useNavigate } from 'react-router-dom';
-import Slider from 'rc-slider'; // Instale a biblioteca: npm install rc-slider
+import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import '../styles/CarsList.css';
 
 const CarsList = () => {
-  const [cars, setCars] = useState([]);
-  const [filteredCars, setFilteredCars] = useState([]);
-  const [colors, setColors] = useState([]);
-  const [fuels, setFuels] = useState([]);/*
-  const [horsepowerRange, setHorsepowerRange] = useState([100, 1000]);*/
+  const {
+    filters,
+    setFilters,
+    filteredCars,
+    setFilteredCars,
+    cars,
+    setCars,
+    colors,
+    setColors,
+    fuels,
+    setFuels
+  } = useContext(FiltersContext);
+
   const [priceRange, setPriceRange] = useState([50000, 800000]);
-  const [filters, setFilters] = useState({
-    brand: '',
-    priceMin: '',
-    priceMax: '',
-    yearMin: '',
-    yearMax: '',
-    mileageMin: '',
-    mileageMax: '',
-    fuel: '',/*
-    horsepowerMin: '',
-    horsepowerMax: '', */
-    color: ''
-  });
-  const navigate = useNavigate();
+  const [doors, setDoors] = useState([]); // Adicionar estado para portas
+  const navigate = useNavigate(); // Certifique-se de que useNavigate está sendo chamado corretamente
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/cars', {
-      method: 'GET'
-    })
+    fetch('http://localhost:3001/api/cars')
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Erro ao buscar carros');
+          throw new Error('Network response was not ok');
         }
         return response.json();
       })
@@ -42,21 +37,43 @@ const CarsList = () => {
 
         const uniqueColors = [...new Set(data.map((car) => car.color))];
         const uniqueFuels = [...new Set(data.map((car) => car.fuel))];
+        const uniqueDoors = [...new Set(data.map((car) => car.doors))]; // Obter portas únicas
         setColors(uniqueColors);
         setFuels(uniqueFuels);
+        setDoors(uniqueDoors); // Definir portas únicas
       })
       .catch((error) => {
         console.error('Erro ao buscar carros:', error);
       });
-  }, []);
+  }, [setCars, setFilteredCars, setColors, setFuels, setDoors]);
 
-  // Função para atualizar os filtros conforme as mudanças nos inputs
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
 
-  // Função para aplicar os filtros
+  const handlePriceSliderChange = (value) => {
+    setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
+    setPriceRange(value);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      brand: '',
+      priceMin: '',
+      priceMax: '',
+      yearMin: '',
+      yearMax: '',
+      mileageMin: '',
+      mileageMax: '',
+      fuel: '',
+      color: '',
+      doors: ''
+    });
+    setPriceRange([50000, 800000]);
+    setFilteredCars(cars);
+  };
+
   const applyFilters = () => {
     let filtered = cars.filter((car) => {
       const meetsPrice =
@@ -71,33 +88,20 @@ const CarsList = () => {
         (!filters.mileageMax || car.mileage <= Number(filters.mileageMax));
       const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
       const meetsColor = !filters.color || car.color === filters.color;
-      /*
-      const meetsHorsepower =
-        (!filters.horsepowerMin || car.horsepower >= Number(filters.horsepowerMin)) &&
-        (!filters.horsepowerMax || car.horsepower <= Number(filters.horsepowerMax));
-  */
+      const meetsDoors = !filters.doors || car.doors === Number(filters.doors);
+
       return (
         meetsPrice &&
         meetsBrand &&
         meetsYear &&
         meetsMileage &&
         meetsFuel &&
-        meetsColor/* &&
-        meetsHorsepower*/
+        meetsColor &&
+        meetsDoors
       );
     });
     setFilteredCars(filtered);
   };
-
-  // Função para atualizar o slider de preço
-  const handlePriceSliderChange = (value) => {
-    setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
-    setPriceRange(value);
-  };/*
-  const handleHorsepowerSliderChange = (value) => {
-    setFilters({ ...filters, horsepowerMin: value[0], horsepowerMax: value[1] });
-    setHorsepowerRange(value);
-  }*/
 
   return (
     <div className="cars-list-container">
@@ -141,28 +145,63 @@ const CarsList = () => {
             <span>{priceRange[1]} €</span>
           </div>
         </div>
-{/*
+
         <div className="filter-group">
-          <label htmlFor="horsepower">Horsepower (CV)</label>
-          <Slider
-            range
-            min={100}
-            max={1000}
-            step={10}
-            value={horsepowerRange}
-            onChange={handleHorsepowerSliderChange}
-            trackStyle={{ backgroundColor: '#27485f', height: 5 }}
-            handleStyle={{
-              borderColor: '#27485f',
-              height: 18,
-              width: 18,
-              marginLeft: -9,
-              marginTop: -7,
-              backgroundColor: '#fff'
-            }}
-            railStyle={{ backgroundColor: '#ccc', height: 5 }}
+          <label htmlFor="yearMin">Year Range</label>
+          <input
+            type="number"
+            id="yearMin"
+            name="yearMin"
+            value={filters.yearMin}
+            onChange={handleFilterChange}
+            placeholder="Min Year"
           />
-        </div> */}
+          <input
+            type="number"
+            id="yearMax"
+            name="yearMax"
+            value={filters.yearMax}
+            onChange={handleFilterChange}
+            placeholder="Max Year"
+          />
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="mileageMin">Mileage (KM)</label>
+          <input
+            type="number"
+            id="mileageMin"
+            name="mileageMin"
+            value={filters.mileageMin}
+            onChange={handleFilterChange}
+            placeholder="Min KM"
+          />
+          <input
+            type="number"
+            id="mileageMax"
+            name="mileageMax"
+            value={filters.mileageMax}
+            onChange={handleFilterChange}
+            placeholder="Max KM"
+          />
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="doors">Number of Doors</label>
+          <select
+            id="doors"
+            name="doors"
+            value={filters.doors}
+            onChange={handleFilterChange}
+          >
+            <option value="">All</option>
+            {doors.map((door, index) => (
+              <option key={index} value={door}>
+                {door}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="filter-group">
           <label htmlFor="fuel">Fuel</label>
@@ -200,6 +239,9 @@ const CarsList = () => {
 
         <button className="apply-filters-button" onClick={applyFilters}>
           Apply Filters
+        </button>
+        <button className="reset-filters-button" onClick={handleResetFilters}>
+          Reset Filters
         </button>
       </div>
 
