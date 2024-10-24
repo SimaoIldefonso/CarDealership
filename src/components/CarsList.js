@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { FiltersContext } from '../components/Filters';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { FiltersContext } from '../context/FiltersContext';
 import { useNavigate } from 'react-router-dom';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
@@ -23,6 +23,35 @@ const CarsList = () => {
   const [doors, setDoors] = useState([]); // Adicionar estado para portas
   const navigate = useNavigate(); // Certifique-se de que useNavigate está sendo chamado corretamente
 
+  const applyFilters = useCallback((carsToFilter = cars, filtersToApply = filters) => {
+    let filtered = carsToFilter.filter((car) => {
+      const meetsPrice =
+        (!filtersToApply.priceMin || car.price >= Number(filtersToApply.priceMin)) &&
+        (!filtersToApply.priceMax || car.price <= Number(filtersToApply.priceMax));
+      const meetsBrand = !filtersToApply.brand || car.brand.toLowerCase().includes(filtersToApply.brand.toLowerCase());
+      const meetsYear =
+        (!filtersToApply.yearMin || car.year >= Number(filtersToApply.yearMin)) &&
+        (!filtersToApply.yearMax || car.year <= Number(filtersToApply.yearMax));
+      const meetsMileage =
+        (!filtersToApply.mileageMin || car.mileage >= Number(filtersToApply.mileageMin)) &&
+        (!filtersToApply.mileageMax || car.mileage <= Number(filtersToApply.mileageMax));
+      const meetsFuel = !filtersToApply.fuel || car.fuel === filtersToApply.fuel;
+      const meetsColor = !filtersToApply.color || car.color === filtersToApply.color;
+      const meetsDoors = !filtersToApply.doors || car.doors === Number(filtersToApply.doors);
+
+      return (
+        meetsPrice &&
+        meetsBrand &&
+        meetsYear &&
+        meetsMileage &&
+        meetsFuel &&
+        meetsColor &&
+        meetsDoors
+      );
+    });
+    setFilteredCars(filtered);
+  }, [cars, filters, setFilteredCars]);
+
   useEffect(() => {
     fetch('http://localhost:3001/api/cars')
       .then((response) => {
@@ -33,7 +62,6 @@ const CarsList = () => {
       })
       .then((data) => {
         setCars(data);
-        setFilteredCars(data);
 
         const uniqueColors = [...new Set(data.map((car) => car.color))];
         const uniqueFuels = [...new Set(data.map((car) => car.fuel))];
@@ -72,35 +100,6 @@ const CarsList = () => {
     });
     setPriceRange([50000, 800000]);
     setFilteredCars(cars);
-  };
-
-  const applyFilters = () => {
-    let filtered = cars.filter((car) => {
-      const meetsPrice =
-        (!filters.priceMin || car.price >= Number(filters.priceMin)) &&
-        (!filters.priceMax || car.price <= Number(filters.priceMax));
-      const meetsBrand = !filters.brand || car.brand.toLowerCase().includes(filters.brand.toLowerCase());
-      const meetsYear =
-        (!filters.yearMin || car.year >= Number(filters.yearMin)) &&
-        (!filters.yearMax || car.year <= Number(filters.yearMax));
-      const meetsMileage =
-        (!filters.mileageMin || car.mileage >= Number(filters.mileageMin)) &&
-        (!filters.mileageMax || car.mileage <= Number(filters.mileageMax));
-      const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
-      const meetsColor = !filters.color || car.color === filters.color;
-      const meetsDoors = !filters.doors || car.doors === Number(filters.doors);
-
-      return (
-        meetsPrice &&
-        meetsBrand &&
-        meetsYear &&
-        meetsMileage &&
-        meetsFuel &&
-        meetsColor &&
-        meetsDoors
-      );
-    });
-    setFilteredCars(filtered);
   };
 
   return (
@@ -237,7 +236,7 @@ const CarsList = () => {
           </select>
         </div>
 
-        <button className="apply-filters-button" onClick={applyFilters}>
+        <button className="apply-filters-button" onClick={() => applyFilters(cars, filters)}>
           Apply Filters
         </button>
         <button className="reset-filters-button" onClick={handleResetFilters}>

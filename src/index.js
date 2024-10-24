@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { FiltersProvider } from './components/Filters';
+import { FiltersProvider } from './context/FiltersContext';
 
 ReactDOM.render(
   <FiltersProvider>

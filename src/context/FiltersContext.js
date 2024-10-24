@@ -3,7 +3,18 @@ import React, { createContext, useState } from 'react';
 export const FiltersContext = createContext();
 
 export const FiltersProvider = ({ children }) => {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    brand: '',
+    priceMin: '',
+    priceMax: '',
+    yearMin: '',
+    yearMax: '',
+    mileageMin: '',
+    mileageMax: '',
+    fuel: '',
+    color: '',
+    doors: ''
+  });
   const [filteredCars, setFilteredCars] = useState([]);
   const [cars, setCars] = useState([]);
   const [colors, setColors] = useState([]);
