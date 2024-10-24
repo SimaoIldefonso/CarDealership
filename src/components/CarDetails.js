@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight, FaChevronLeft, FaTachometerAlt, FaGasPump, FaCogs, FaBolt } from 'react-icons/fa';
+import { Modal } from 'react-bootstrap';
 import '../styles/CarDetails.css';
 
 const CarDetails = () => {
@@ -8,6 +9,7 @@ const CarDetails = () => {
   const navigate = useNavigate();
   const [car, setCar] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/cars/${id}`)
@@ -24,6 +26,20 @@ const CarDetails = () => {
     setCurrentImageIndex((prevIndex) => 
       prevIndex === 0 ? car.images.length - 1 : prevIndex - 1
     );
+  };
+
+  const handleImageClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleModalClick = (e) => {
+    if (e.target.classList.contains('modal-content')) {
+      handleCloseModal();
+    }
   };
 
   if (!car) {
@@ -48,6 +64,7 @@ const CarDetails = () => {
               src={car.images[currentImageIndex]} 
               alt={`${car.brand} ${car.model}`} 
               className="car-image"
+              onClick={handleImageClick}
             />
           ) : (
             <p>No images available</p>
@@ -92,6 +109,20 @@ const CarDetails = () => {
           <button className="contact-seller">Contact Seller</button>
         </div>
       </div>
+
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <div className="modal-dialog" onClick={handleModalClick}>
+          <div className="modal-content">
+            <div className="modal-body">
+              <img 
+                src={car.images[currentImageIndex]} 
+                alt={`${car.brand} ${car.model}`} 
+                className="modal-image"
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

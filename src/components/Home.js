@@ -6,17 +6,32 @@ import '../styles/Home.css';
 
 const Home = () => {
   const [cars, setCars] = useState([]);
+  const [currentCarIndex, setCurrentCarIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:3001/api/cars')
-      .then(response => setCars(response.data.slice(0, 3))) // Pegar os 3 primeiros carros
+      .then(response => setCars(response.data.slice(0, 3))) 
       .catch(error => console.error('Error fetching cars:', error));
   }, []);
 
   const handleCarClick = (carId) => {
     navigate(`/car/${carId}`);
   };
+
+  const handleNextCar = () => {
+    setCurrentCarIndex((prevIndex) => (prevIndex + 1) % cars.length);
+  };
+
+  const handlePreviousCar = () => {
+    setCurrentCarIndex((prevIndex) => 
+      prevIndex === 0 ? cars.length - 1 : prevIndex - 1
+    );
+  };
+
+  if (cars.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="home-container">
@@ -28,25 +43,34 @@ const Home = () => {
           {cars.map((car, index) => (
             <div 
               key={car._id} 
-              className={`carousel-item ${index === 0 ? 'active' : ''}`} 
+              className={`carousel-item ${index === currentCarIndex ? 'active' : ''}`} 
               onClick={() => handleCarClick(car._id)}
             >
               <img src={car.images[0]} className="d-block w-100 car-image" alt={car.name} />
-              <div className="carousel-caption d-none d-md-block">
-                <h5>{car.name}</h5>
-                <p>{car.description}</p>
-              </div>
+
             </div>
           ))}
         </div>
-        <button className="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
+        <button className="carousel-control-prev" type="button" onClick={handlePreviousCar}>
           <span className="carousel-control-prev-icon" aria-hidden="true"></span>
           <span className="visually-hidden">Previous</span>
         </button>
-        <button className="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
+        <button className="carousel-control-next" type="button" onClick={handleNextCar}>
           <span className="carousel-control-next-icon" aria-hidden="true"></span>
           <span className="visually-hidden">Next</span>
         </button>
+        <div className="carousel-indicators">
+          {cars.map((_, index) => (
+            <button 
+              key={index} 
+              type="button" 
+              data-bs-target="#carCarousel" 
+              data-bs-slide-to={index} 
+              className={index === currentCarIndex ? 'active' : ''}
+              aria-current={index === currentCarIndex ? 'true' : 'false'}
+            ></button>
+          ))}
+          </div>
       </div>
     </div>
   );

@@ -36,6 +36,7 @@
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .image-nav {
@@ -118,4 +119,29 @@
 
 .contact-seller:hover {
   background-color: #002a5c;
+}
+
+.modal-dialog {
+  max-width: 90%;
+}
+
+.modal-content {
+  background: none;
+  border: none;
+  position: relative;
+}
+
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.modal-image {
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  border-radius: 8px;
+  border: 5px solid white;
 }
