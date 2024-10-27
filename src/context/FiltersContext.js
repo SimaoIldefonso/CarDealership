@@ -15,6 +15,7 @@ export const FiltersProvider = ({ children }) => {
     color: '',
     doors: ''
   });
+  const [tempFilters, setTempFilters] = useState(filters);
   const [filteredCars, setFilteredCars] = useState([]);
   const [cars, setCars] = useState([]);
   const [colors, setColors] = useState([]);
@@ -24,6 +25,8 @@ export const FiltersProvider = ({ children }) => {
     <FiltersContext.Provider value={{
       filters,
       setFilters,
+      tempFilters,
+      setTempFilters,
       filteredCars,
       setFilteredCars,
       cars,

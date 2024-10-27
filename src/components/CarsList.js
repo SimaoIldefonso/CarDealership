@@ -7,8 +7,9 @@ import '../styles/CarsList.css';
 
 const CarsList = () => {
   const {
-    filters,
     setFilters,
+    tempFilters,
+    setTempFilters,
     filteredCars,
     setFilteredCars,
     cars,
@@ -21,23 +22,24 @@ const CarsList = () => {
 
   const [priceRange, setPriceRange] = useState([50000, 800000]);
   const [doors, setDoors] = useState([]); // Adicionar estado para portas
-  const navigate = useNavigate(); // Certifique-se de que useNavigate está sendo chamado corretamente
+  const navigate = useNavigate();
 
-  const applyFilters = useCallback((carsToFilter = cars, filtersToApply = filters) => {
-    let filtered = carsToFilter.filter((car) => {
+  // Aplicar os filtros somente ao clicar no botão "Apply Filters"
+  const applyFilters = useCallback(() => {
+    const filtered = cars.filter((car) => {
       const meetsPrice =
-        (!filtersToApply.priceMin || car.price >= Number(filtersToApply.priceMin)) &&
-        (!filtersToApply.priceMax || car.price <= Number(filtersToApply.priceMax));
-      const meetsBrand = !filtersToApply.brand || car.brand.toLowerCase().includes(filtersToApply.brand.toLowerCase());
+        (!tempFilters.priceMin || car.price >= Number(tempFilters.priceMin)) &&
+        (!tempFilters.priceMax || car.price <= Number(tempFilters.priceMax));
+      const meetsBrand = !tempFilters.brand || car.brand.toLowerCase().includes(tempFilters.brand.toLowerCase());
       const meetsYear =
-        (!filtersToApply.yearMin || car.year >= Number(filtersToApply.yearMin)) &&
-        (!filtersToApply.yearMax || car.year <= Number(filtersToApply.yearMax));
+        (!tempFilters.yearMin || car.year >= Number(tempFilters.yearMin)) &&
+        (!tempFilters.yearMax || car.year <= Number(tempFilters.yearMax));
       const meetsMileage =
-        (!filtersToApply.mileageMin || car.mileage >= Number(filtersToApply.mileageMin)) &&
-        (!filtersToApply.mileageMax || car.mileage <= Number(filtersToApply.mileageMax));
-      const meetsFuel = !filtersToApply.fuel || car.fuel === filtersToApply.fuel;
-      const meetsColor = !filtersToApply.color || car.color === filtersToApply.color;
-      const meetsDoors = !filtersToApply.doors || car.doors === Number(filtersToApply.doors);
+        (!tempFilters.mileageMin || car.mileage >= Number(tempFilters.mileageMin)) &&
+        (!tempFilters.mileageMax || car.mileage <= Number(tempFilters.mileageMax));
+      const meetsFuel = !tempFilters.fuel || car.fuel === tempFilters.fuel;
+      const meetsColor = !tempFilters.color || car.color === tempFilters.color;
+      const meetsDoors = !tempFilters.doors || car.doors === Number(tempFilters.doors);
 
       return (
         meetsPrice &&
@@ -49,8 +51,10 @@ const CarsList = () => {
         meetsDoors
       );
     });
+
     setFilteredCars(filtered);
-  }, [cars, filters, setFilteredCars]);
+    setFilters(tempFilters); // Atualizar os filtros principais após aplicar
+  }, [cars, tempFilters, setFilteredCars, setFilters]);
 
   useEffect(() => {
     fetch('http://localhost:3001/api/cars')
@@ -62,63 +66,40 @@ const CarsList = () => {
       })
       .then((data) => {
         setCars(data);
-
         const uniqueColors = [...new Set(data.map((car) => car.color))];
         const uniqueFuels = [...new Set(data.map((car) => car.fuel))];
-        const uniqueDoors = [...new Set(data.map((car) => car.doors))]; // Obter portas únicas
+        const uniqueDoors = [...new Set(data.map((car) => car.doors))];
         setColors(uniqueColors);
         setFuels(uniqueFuels);
-        setDoors(uniqueDoors); // Definir portas únicas
+        setDoors(uniqueDoors);
+        setFilteredCars(data); // Exibir todos os carros inicialmente
       })
       .catch((error) => {
         console.error('Erro ao buscar carros:', error);
       });
   }, [setCars, setFilteredCars, setColors, setFuels, setDoors]);
 
-  const handleFilterChange = (e) => {
+  // Atualiza o filtro temporário com os valores inseridos
+  const handleTempFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
-  };
-
-  const handlePriceSliderChange = (value) => {
-    setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
-    setPriceRange(value);
-  };
-
-  const handleResetFilters = () => {
-    setFilters({
-      brand: '',
-      priceMin: '',
-      priceMax: '',
-      yearMin: '',
-      yearMax: '',
-      mileageMin: '',
-      mileageMax: '',
-      fuel: '',
-      color: '',
-      doors: ''
-    });
-    setPriceRange([50000, 800000]);
-    setFilteredCars(cars);
+    setTempFilters({ ...tempFilters, [name]: value });
   };
 
   return (
     <div className="cars-list-container">
       <div className="filters-sidebar">
         <h3>Filters</h3>
-
         <div className="filter-group">
           <label htmlFor="brand">Brand</label>
           <input
             type="text"
             id="brand"
             name="brand"
-            value={filters.brand}
-            onChange={handleFilterChange}
+            value={tempFilters.brand}
+            onChange={handleTempFilterChange}
             placeholder="e.g., Toyota"
           />
         </div>
-
         <div className="filter-group">
           <label htmlFor="price">Price Range (€)</label>
           <Slider
@@ -127,7 +108,10 @@ const CarsList = () => {
             max={800000}
             step={1000}
             value={priceRange}
-            onChange={handlePriceSliderChange}
+            onChange={(value) => {
+              setTempFilters({ ...tempFilters, priceMin: value[0], priceMax: value[1] });
+              setPriceRange(value);
+            }}
             trackStyle={{ backgroundColor: '#27485f', height: 5 }}
             handleStyle={{
               borderColor: '#27485f',
@@ -144,54 +128,51 @@ const CarsList = () => {
             <span>{priceRange[1]} €</span>
           </div>
         </div>
-
         <div className="filter-group">
           <label htmlFor="yearMin">Year Range</label>
           <input
             type="number"
             id="yearMin"
             name="yearMin"
-            value={filters.yearMin}
-            onChange={handleFilterChange}
+            value={tempFilters.yearMin}
+            onChange={handleTempFilterChange}
             placeholder="Min Year"
           />
           <input
             type="number"
             id="yearMax"
             name="yearMax"
-            value={filters.yearMax}
-            onChange={handleFilterChange}
+            value={tempFilters.yearMax}
+            onChange={handleTempFilterChange}
             placeholder="Max Year"
           />
         </div>
-
         <div className="filter-group">
           <label htmlFor="mileageMin">Mileage (KM)</label>
           <input
             type="number"
             id="mileageMin"
             name="mileageMin"
-            value={filters.mileageMin}
-            onChange={handleFilterChange}
+            value={tempFilters.mileageMin}
+            onChange={handleTempFilterChange}
             placeholder="Min KM"
           />
           <input
             type="number"
             id="mileageMax"
             name="mileageMax"
-            value={filters.mileageMax}
-            onChange={handleFilterChange}
+            value={tempFilters.mileageMax}
+            onChange={handleTempFilterChange}
             placeholder="Max KM"
           />
         </div>
-
         <div className="filter-group">
           <label htmlFor="doors">Number of Doors</label>
           <select
             id="doors"
             name="doors"
-            value={filters.doors}
-            onChange={handleFilterChange}
+            value={tempFilters.doors}
+            onChange={handleTempFilterChange}
           >
             <option value="">All</option>
             {doors.map((door, index) => (
@@ -201,14 +182,13 @@ const CarsList = () => {
             ))}
           </select>
         </div>
-
         <div className="filter-group">
           <label htmlFor="fuel">Fuel</label>
           <select
             id="fuel"
             name="fuel"
-            value={filters.fuel}
-            onChange={handleFilterChange}
+            value={tempFilters.fuel}
+            onChange={handleTempFilterChange}
           >
             <option value="">All Fuels</option>
             {fuels.map((fuel, index) => (
@@ -218,14 +198,13 @@ const CarsList = () => {
             ))}
           </select>
         </div>
-
         <div className="filter-group">
           <label htmlFor="color">Color</label>
           <select
             id="color"
             name="color"
-            value={filters.color}
-            onChange={handleFilterChange}
+            value={tempFilters.color}
+            onChange={handleTempFilterChange}
           >
             <option value="">All Colors</option>
             {colors.map((color, index) => (
@@ -235,15 +214,31 @@ const CarsList = () => {
             ))}
           </select>
         </div>
-
-        <button className="apply-filters-button" onClick={() => applyFilters(cars, filters)}>
+        <button className="apply-filters-button" onClick={applyFilters}>
           Apply Filters
         </button>
-        <button className="reset-filters-button" onClick={handleResetFilters}>
+        <button
+          className="reset-filters-button"
+          onClick={() => {
+            setTempFilters({
+              brand: '',
+              priceMin: '',
+              priceMax: '',
+              yearMin: '',
+              yearMax: '',
+              mileageMin: '',
+              mileageMax: '',
+              fuel: '',
+              color: '',
+              doors: ''
+            });
+            setPriceRange([50000, 800000]);
+            setFilteredCars(cars);
+          }}
+        >
           Reset Filters
         </button>
       </div>
-
       <div className="cars-list">
         <h2>Available Cars</h2>
         <div className="row">
@@ -257,14 +252,16 @@ const CarsList = () => {
                 <img
                   src={car.images[0]}
                   className="card-img-top"
-                  alt={car.brand + ' ' + car.model}
+                  alt={`${car.brand} ${car.model}`}
                 />
                 <div className="card-body">
                   <h5 className="card-title">
                     {car.brand} {car.model}
                   </h5>
-                  <p className="card-text">Year: {car.year}</p>
-                  <p className="card-text">Price: {car.price}€</p>
+                  <p className="card-text">
+                    Price: {car.price} € | Year: {car.year} 
+                  </p>
+
                 </div>
               </div>
             </div>

@@ -47,7 +47,6 @@ const Home = () => {
               onClick={() => handleCarClick(car._id)}
             >
               <img src={car.images[0]} className="d-block w-100 car-image" alt={car.name} />
-
             </div>
           ))}
         </div>
@@ -70,7 +69,7 @@ const Home = () => {
               aria-current={index === currentCarIndex ? 'true' : 'false'}
             ></button>
           ))}
-          </div>
+        </div>
       </div>
     </div>
   );

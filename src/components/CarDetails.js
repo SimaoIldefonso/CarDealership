@@ -42,13 +42,17 @@ const CarDetails = () => {
     }
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Retorna para a lista de carros sem resetar os filtros
+  };
+
   if (!car) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="car-details-container">
-      <button className="back-button" onClick={() => navigate(-1)}>
+      <button className="back-button" onClick={handleBackClick}>
         <FaChevronLeft /> Back
       </button>
       
