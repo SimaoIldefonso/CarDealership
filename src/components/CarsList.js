@@ -8,55 +8,23 @@ import '../styles/CarsList.css';
 const CarsList = () => {
   const {
     setFilters,
-    tempFilters,
-    setTempFilters,
-    filteredCars,
+    filters,
     setFilteredCars,
+    filteredCars,
     cars,
     setCars,
     colors,
     setColors,
     fuels,
-    setFuels
+    setFuels,
   } = useContext(FiltersContext);
 
   const [priceRange, setPriceRange] = useState([50000, 800000]);
-  const [doors, setDoors] = useState([]); // Adicionar estado para portas
+  const [doors, setDoors] = useState([]);
   const navigate = useNavigate();
 
-  // Aplicar os filtros somente ao clicar no botão "Apply Filters"
-  const applyFilters = useCallback(() => {
-    const filtered = cars.filter((car) => {
-      const meetsPrice =
-        (!tempFilters.priceMin || car.price >= Number(tempFilters.priceMin)) &&
-        (!tempFilters.priceMax || car.price <= Number(tempFilters.priceMax));
-      const meetsBrand = !tempFilters.brand || car.brand.toLowerCase().includes(tempFilters.brand.toLowerCase());
-      const meetsYear =
-        (!tempFilters.yearMin || car.year >= Number(tempFilters.yearMin)) &&
-        (!tempFilters.yearMax || car.year <= Number(tempFilters.yearMax));
-      const meetsMileage =
-        (!tempFilters.mileageMin || car.mileage >= Number(tempFilters.mileageMin)) &&
-        (!tempFilters.mileageMax || car.mileage <= Number(tempFilters.mileageMax));
-      const meetsFuel = !tempFilters.fuel || car.fuel === tempFilters.fuel;
-      const meetsColor = !tempFilters.color || car.color === tempFilters.color;
-      const meetsDoors = !tempFilters.doors || car.doors === Number(tempFilters.doors);
-
-      return (
-        meetsPrice &&
-        meetsBrand &&
-        meetsYear &&
-        meetsMileage &&
-        meetsFuel &&
-        meetsColor &&
-        meetsDoors
-      );
-    });
-
-    setFilteredCars(filtered);
-    setFilters(tempFilters); // Atualizar os filtros principais após aplicar
-  }, [cars, tempFilters, setFilteredCars, setFilters]);
-
-  useEffect(() => {
+  // Function to fetch initial cars (using useCallback)
+  const fetchInitialCars = useCallback(() => {
     fetch('http://localhost:3001/api/cars')
       .then((response) => {
         if (!response.ok) {
@@ -66,23 +34,69 @@ const CarsList = () => {
       })
       .then((data) => {
         setCars(data);
+        setFilteredCars(data);
         const uniqueColors = [...new Set(data.map((car) => car.color))];
         const uniqueFuels = [...new Set(data.map((car) => car.fuel))];
         const uniqueDoors = [...new Set(data.map((car) => car.doors))];
         setColors(uniqueColors);
         setFuels(uniqueFuels);
         setDoors(uniqueDoors);
-        setFilteredCars(data); // Exibir todos os carros inicialmente
       })
       .catch((error) => {
         console.error('Erro ao buscar carros:', error);
       });
   }, [setCars, setFilteredCars, setColors, setFuels, setDoors]);
 
-  // Atualiza o filtro temporário com os valores inseridos
-  const handleTempFilterChange = (e) => {
+  // Function to apply filters
+  const applyFilters = useCallback(() => {
+    const filtered = cars.filter((car) => {
+      const meetsPrice =
+        (!filters.priceMin || car.price >= Number(filters.priceMin)) &&
+        (!filters.priceMax || car.price <= Number(filters.priceMax));
+      const meetsBrand = !filters.brand || car.brand.toLowerCase().includes(filters.brand.toLowerCase());
+      const meetsYear =
+        (!filters.yearMin || car.year >= Number(filters.yearMin)) &&
+        (!filters.yearMax || car.year <= Number(filters.yearMax));
+      const meetsMileage =
+        (!filters.mileageMin || car.mileage >= Number(filters.mileageMin)) &&
+        (!filters.mileageMax || car.mileage <= Number(filters.mileageMax));
+      const meetsFuel = !filters.fuel || car.fuel === filters.fuel;
+      const meetsColor = !filters.color || car.color === filters.color;
+      const meetsDoors = !filters.doors || car.doors === Number(filters.doors);
+
+      return meetsPrice && meetsBrand && meetsYear && meetsMileage && meetsFuel && meetsColor && meetsDoors;
+    });
+
+    setFilteredCars(filtered);
+  }, [cars, filters, setFilteredCars]);
+
+  // Call fetchInitialCars once on component mount
+  useEffect(() => {
+    fetchInitialCars();
+  }, [fetchInitialCars]);
+
+  // useEffect for applying filters
+  useEffect(() => {
+    if (
+      filters.brand ||
+      filters.priceMin ||
+      filters.priceMax ||
+      filters.yearMin ||
+      filters.yearMax ||
+      filters.mileageMin ||
+      filters.mileageMax ||
+      filters.fuel ||
+      filters.color ||
+      filters.doors
+    ) {
+      applyFilters();
+    }
+  }, [filters, applyFilters]);
+
+  // Update the filters with the entered values
+  const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setTempFilters({ ...tempFilters, [name]: value });
+    setFilters({ ...filters, [name]: value });
   };
 
   return (
@@ -95,8 +109,8 @@ const CarsList = () => {
             type="text"
             id="brand"
             name="brand"
-            value={tempFilters.brand}
-            onChange={handleTempFilterChange}
+            value={filters.brand}
+            onChange={handleFilterChange}
             placeholder="e.g., Toyota"
           />
         </div>
@@ -109,7 +123,7 @@ const CarsList = () => {
             step={1000}
             value={priceRange}
             onChange={(value) => {
-              setTempFilters({ ...tempFilters, priceMin: value[0], priceMax: value[1] });
+              setFilters({ ...filters, priceMin: value[0], priceMax: value[1] });
               setPriceRange(value);
             }}
             trackStyle={{ backgroundColor: '#27485f', height: 5 }}
@@ -134,16 +148,16 @@ const CarsList = () => {
             type="number"
             id="yearMin"
             name="yearMin"
-            value={tempFilters.yearMin}
-            onChange={handleTempFilterChange}
+            value={filters.yearMin}
+            onChange={handleFilterChange}
             placeholder="Min Year"
           />
           <input
             type="number"
             id="yearMax"
             name="yearMax"
-            value={tempFilters.yearMax}
-            onChange={handleTempFilterChange}
+            value={filters.yearMax}
+            onChange={handleFilterChange}
             placeholder="Max Year"
           />
         </div>
@@ -153,16 +167,16 @@ const CarsList = () => {
             type="number"
             id="mileageMin"
             name="mileageMin"
-            value={tempFilters.mileageMin}
-            onChange={handleTempFilterChange}
+            value={filters.mileageMin}
+            onChange={handleFilterChange}
             placeholder="Min KM"
           />
           <input
             type="number"
             id="mileageMax"
             name="mileageMax"
-            value={tempFilters.mileageMax}
-            onChange={handleTempFilterChange}
+            value={filters.mileageMax}
+            onChange={handleFilterChange}
             placeholder="Max KM"
           />
         </div>
@@ -171,8 +185,8 @@ const CarsList = () => {
           <select
             id="doors"
             name="doors"
-            value={tempFilters.doors}
-            onChange={handleTempFilterChange}
+            value={filters.doors}
+            onChange={handleFilterChange}
           >
             <option value="">All</option>
             {doors.map((door, index) => (
@@ -187,8 +201,8 @@ const CarsList = () => {
           <select
             id="fuel"
             name="fuel"
-            value={tempFilters.fuel}
-            onChange={handleTempFilterChange}
+            value={filters.fuel}
+            onChange={handleFilterChange}
           >
             <option value="">All Fuels</option>
             {fuels.map((fuel, index) => (
@@ -203,8 +217,8 @@ const CarsList = () => {
           <select
             id="color"
             name="color"
-            value={tempFilters.color}
-            onChange={handleTempFilterChange}
+            value={filters.color}
+            onChange={handleFilterChange}
           >
             <option value="">All Colors</option>
             {colors.map((color, index) => (
@@ -214,13 +228,14 @@ const CarsList = () => {
             ))}
           </select>
         </div>
+        {/* Apply
         <button className="apply-filters-button" onClick={applyFilters}>
           Apply Filters
-        </button>
+        </button> button */}
         <button
           className="reset-filters-button"
           onClick={() => {
-            setTempFilters({
+            setFilters({
               brand: '',
               priceMin: '',
               priceMax: '',
